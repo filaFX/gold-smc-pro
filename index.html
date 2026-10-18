@@ -546,5 +546,78 @@ const supabaseClient = window.supabase.createClient(
 
 console.log("GOLD SMC PRO connected!");
 </script>
+
+<!-- GOLD SMC PRO LOGIN AND SIGNUP -->
+<section id="login" style="max-width:420px;margin:40px auto;padding:24px;border:1px solid #444;border-radius:12px;color:inherit;">
+  <h2>Welcome to GOLD SMC PRO</h2>
+  <p>Log in or create your account.</p>
+
+  <form id="auth-form">
+    <label for="auth-email">Email</label>
+    <input id="auth-email" type="email" placeholder="Enter your email" required
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <label for="auth-password">Password</label>
+    <input id="auth-password" type="password" placeholder="At least 6 characters" minlength="6" required
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <button type="submit" id="login-button">Log In</button>
+    <button type="button" id="signup-button">Create Account</button>
+    <p id="auth-message" role="status"></p>
+  </form>
+</section>
+
+<script>
+const authForm = document.getElementById("auth-form");
+const authMessage = document.getElementById("auth-message");
+
+authForm.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const email = document.getElementById("auth-email").value.trim();
+  const password = document.getElementById("auth-password").value;
+
+  authMessage.textContent = "Logging in...";
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    authMessage.textContent = error.message;
+    return;
+  }
+
+  authMessage.textContent = "Login successful! Welcome back.";
+});
+
+document.getElementById("signup-button").addEventListener("click", async function() {
+  const email = document.getElementById("auth-email").value.trim();
+  const password = document.getElementById("auth-password").value;
+
+  if (!email || password.length < 6) {
+    authMessage.textContent = "Enter a valid email and a password of at least 6 characters.";
+    return;
+  }
+
+  authMessage.textContent = "Creating your account...";
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    authMessage.textContent = error.message;
+    return;
+  }
+
+  authMessage.textContent = data.session
+    ? "Account created! You can now log in."
+    : "Account created! Check your email to confirm your account.";
+});
+</script>
+  
 </body> 
 </html>
