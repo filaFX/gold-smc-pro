@@ -531,6 +531,19 @@
     document.getElementById("year").textContent =
       new Date().getFullYear();
   </script>
+<!-- GOLD SMC PRO CONNECTION -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-</body>
+<script>
+const SUPABASE_URL = "https://somsfkdkssarligzbtqq.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_7fhjbvwWM2PacTUXHfX3HA_TWBuGLui";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+console.log("GOLD SMC PRO connected!");
+</script>
+</body> 
 </html>
