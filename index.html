@@ -840,4 +840,42 @@ document.addEventListener("keydown", function(event) {
 <!-- END GOLD SMC PRO SIGNALS PANEL -->
 
  </body>
+  <!-- GOLD SMC PRO CUSTOMER PROFILE -->
+<section id="customer-profile" style="display:none; background:#101010; color:#fff; border:1px solid #d4af37; border-radius:14px; padding:24px; max-width:500px; margin:30px auto;">
+
+  <h2 style="color:#d4af37;">COMPLETE YOUR PROFILE</h2>
+  <p>Complete your details to continue to GOLD SMC PRO.</p>
+
+  <form id="customer-profile-form">
+
+    <label for="profile-full-name">Full Name</label>
+    <input id="profile-full-name" type="text" required
+      autocomplete="name"
+      style="display:block;width:100%;padding:12px;margin:8px 0 16px;box-sizing:border-box;">
+
+    <label for="profile-country">Country</label>
+    <input id="profile-country" type="text" required
+      autocomplete="country-name"
+      style="display:block;width:100%;padding:12px;margin:8px 0 16px;box-sizing:border-box;">
+
+    <label for="profile-phone">Phone Number</label>
+    <input id="profile-phone" type="tel"
+      autocomplete="tel"
+      style="display:block;width:100%;padding:12px;margin:8px 0 16px;box-sizing:border-box;">
+
+    <label for="profile-address">Address (Optional)</label>
+    <input id="profile-address" type="text"
+      autocomplete="street-address"
+      style="display:block;width:100%;padding:12px;margin:8px 0 16px;box-sizing:border-box;">
+
+    <button type="submit"
+      style="background:#d4af37;color:#000;font-weight:bold;padding:12px 20px;border:0;border-radius:6px;cursor:pointer;">
+      SAVE PROFILE
+    </button>
+
+    <p id="profile-message" role="status" aria-live="polite"></p>
+
+  </form>
+</section>
+<!-- END CUSTOMER PROFILE -->
 </html>
