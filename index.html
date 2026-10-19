@@ -549,24 +549,35 @@ console.log("GOLD SMC PRO connected!");
 </script>
 
 <!-- GOLD SMC PRO LOGIN AND SIGNUP -->
-<section id="login" style="max-width:420px;margin:40px auto;padding:24px;border:1px solid #444;border-radius:12px;color:inherit;">
-  <h2>Welcome to GOLD SMC PRO</h2>
-  <p>Log in or create your account.</p>
 
-  <form id="auth-form">
-    <label for="auth-email">Email</label>
-    <input id="auth-email" type="email" placeholder="Enter your email" required
-      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+<!-- GOLD SMC PRO BLACK AND GOLD AUTH POPUP -->
+<div id="auth-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.82);align-items:center;justify-content:center;padding:18px;box-sizing:border-box;">
 
-    <label for="auth-password">Password</label>
-    <input id="auth-password" type="password" placeholder="At least 6 characters" minlength="6" required
-      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+  <section style="position:relative;width:100%;max-width:420px;box-sizing:border-box;padding:30px 24px;background:#101010;border:1px solid #d4af37;border-radius:16px;color:#f5f5f5;box-shadow:0 0 30px rgba(212,175,55,0.18);">
 
-    <button type="submit" id="login-button">Log In</button>
-    <button type="button" id="signup-button">Create Account</button>
-    <p id="auth-message" role="status"></p>
-  </form>
-</section>
+    <button type="button" id="close-auth-modal" aria-label="Close login popup" style="position:absolute;top:12px;right:12px;background:transparent;color:#d4af37;border:1px solid #d4af37;border-radius:8px;padding:6px 12px;cursor:pointer;">✕</button>
+
+    <h2 id="auth-title" style="color:#d4af37;text-align:center;margin-top:12px;">GOLD SMC PRO</h2>
+    <p style="text-align:center;color:#ccc;">Welcome to professional trading</p>
+
+    <form id="auth-form">
+      <label for="auth-email">Email</label>
+      <input id="auth-email" type="email" placeholder="Enter your email" required
+        style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;background:#1c1c1c;border:1px solid #555;border-radius:8px;color:white;">
+
+      <label for="auth-password">Password</label>
+      <input id="auth-password" type="password" placeholder="Enter your password" minlength="6" required
+        style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;background:#1c1c1c;border:1px solid #555;border-radius:8px;color:white;">
+
+      <button type="submit" id="login-button" style="width:100%;padding:12px;margin:5px 0;background:#d4af37;color:#111;border:0;border-radius:8px;font-weight:bold;cursor:pointer;">LOG IN</button>
+
+      <button type="button" id="signup-button" style="width:100%;padding:12px;margin:5px 0;background:#191919;color:#d4af37;border:1px solid #d4af37;border-radius:8px;font-weight:bold;cursor:pointer;">CREATE ACCOUNT</button>
+
+      <p id="auth-message" role="status" style="overflow-wrap:anywhere;color:#d4af37;"></p>
+    </form>
+  </section>
+</div>
+
 
 <script>
 const authForm = document.getElementById("auth-form");
@@ -682,6 +693,53 @@ supabaseClient.auth.onAuthStateChange(function(event, session) {
 });
 
 updateAccountStatus();
-</script>  
+</script>
+  <!-- GOLD SMC PRO POPUP CONTROLS -->
+<script>
+const authModal = document.getElementById("auth-modal");
+const closeAuthModal = document.getElementById("close-auth-modal");
+const authTitle = document.getElementById("auth-title");
+const authEmail = document.getElementById("auth-email");
+
+function openAuthModal(mode) {
+  authModal.style.display = "flex";
+
+  if (mode === "signup") {
+    authTitle.textContent = "CREATE YOUR ACCOUNT";
+  } else {
+    authTitle.textContent = "WELCOME BACK";
+  }
+
+  setTimeout(() => authEmail.focus(), 100);
+}
+
+document.querySelectorAll('a[href="#login"], a[href="#signup"]').forEach(link => {
+  link.addEventListener("click", function(event) {
+    event.preventDefault();
+
+    const mode = this.getAttribute("href") === "#signup"
+      ? "signup"
+      : "login";
+
+    openAuthModal(mode);
+  });
+});
+
+closeAuthModal.addEventListener("click", function() {
+  authModal.style.display = "none";
+});
+
+authModal.addEventListener("click", function(event) {
+  if (event.target === authModal) {
+    authModal.style.display = "none";
+  }
+});
+
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    authModal.style.display = "none";
+  }
+});
+</script>
 </body> 
 </html>
