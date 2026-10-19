@@ -619,6 +619,69 @@ document.getElementById("signup-button").addEventListener("click", async functio
     : "Account created! Check your email to confirm your account.";
 });
 </script>
-  
+<!-- GOLD SMC PRO ACCOUNT STATUS -->
+<section id="account-panel" style="max-width:420px;margin:30px auto;padding:20px;border:1px solid #444;border-radius:12px;color:inherit;">
+  <h2>My Account</h2>
+
+  <p id="account-status">Checking login status...</p>
+  <p id="account-email"></p>
+
+  <button id="logout-button" type="button" hidden>
+    Log Out
+  </button>
+</section>
+
+<script>
+const accountStatus = document.getElementById("account-status");
+const accountEmail = document.getElementById("account-email");
+const logoutButton = document.getElementById("logout-button");
+
+async function updateAccountStatus() {
+  const { data, error } = await supabaseClient.auth.getUser();
+
+  if (error || !data.user) {
+    accountStatus.textContent = "You are not logged in.";
+    accountEmail.textContent = "";
+    logoutButton.hidden = true;
+    return;
+  }
+
+  accountStatus.textContent = "You are logged in!";
+  accountEmail.textContent = "Email: " + data.user.email;
+  logoutButton.hidden = false;
+}
+
+logoutButton.addEventListener("click", async function() {
+  logoutButton.disabled = true;
+  accountStatus.textContent = "Logging out...";
+
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    accountStatus.textContent = "Logout failed. Please try again.";
+    logoutButton.disabled = false;
+    return;
+  }
+
+  accountStatus.textContent = "You have logged out successfully.";
+  accountEmail.textContent = "";
+  logoutButton.hidden = true;
+  logoutButton.disabled = false;
+});
+
+supabaseClient.auth.onAuthStateChange(function(event, session) {
+  if (event === "SIGNED_OUT" || !session) {
+    accountStatus.textContent = "You are not logged in.";
+    accountEmail.textContent = "";
+    logoutButton.hidden = true;
+  } else {
+    accountStatus.textContent = "You are logged in!";
+    accountEmail.textContent = "Email: " + session.user.email;
+    logoutButton.hidden = false;
+  }
+});
+
+updateAccountStatus();
+</script>  
 </body> 
 </html>
