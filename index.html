@@ -878,6 +878,130 @@ document.addEventListener("keydown", function(event) {
   </form>
 </section>
 <!-- END CUSTOMER PROFILE -->
+<!-- GOLD SMC PRO PROFILE CONNECTION -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+  const profileSection = document.getElementById("customer-profile");
+  const profileForm = document.getElementById("customer-profile-form");
+  const profileMessage = document.getElementById("profile-message");
+
+  const fullNameInput = document.getElementById("profile-full-name");
+  const countryInput = document.getElementById("profile-country");
+  const phoneInput = document.getElementById("profile-phone");
+  const addressInput = document.getElementById("profile-address");
+
+  if (!profileSection || !profileForm || !profileMessage) {
+    console.error("GOLD SMC PRO profile form not found.");
+    return;
+  }
+
+  async function checkCustomerProfile(session) {
+    if (!session) {
+      profileSection.style.display = "none";
+      return;
+    }
+
+    const user = session.user;
+
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("user_id, full_name, country, phone, address")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Profile lookup failed:", error.message);
+      profileMessage.textContent =
+        "We couldn't load your profile. Please try again.";
+      profileSection.style.display = "block";
+      return;
+    }
+
+    if (data && data.full_name && data.country) {
+      profileSection.style.display = "none";
+      return;
+    }
+
+    if (data) {
+      fullNameInput.value = data.full_name || "";
+      countryInput.value = data.country || "";
+      phoneInput.value = data.phone || "";
+      addressInput.value = data.address || "";
+    }
+
+    profileSection.style.display = "block";
+    profileMessage.textContent =
+      "Please complete your profile to continue.";
+  }
+
+  profileForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    profileMessage.textContent = "Saving your profile...";
+
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
+
+    if (sessionError || !sessionData.session) {
+      profileMessage.textContent =
+        "Please log in before saving your profile.";
+      return;
+    }
+
+    const user = sessionData.session.user;
+
+    const fullName = fullNameInput.value.trim();
+    const country = countryInput.value.trim();
+
+    if (!fullName || !country) {
+      profileMessage.textContent =
+        "Please enter your full name and country.";
+      return;
+    }
+
+    const profile = {
+      id: user.id,
+      user_id: user.id,
+      full_name: fullName,
+      country: country,
+      phone: phoneInput.value.trim() || null,
+      address: addressInput.value.trim() || null,
+      updated_at: new Date().toISOString()
+    };
+
+    const { error } = await supabaseClient
+      .from("profiles")
+      .upsert(profile, { onConflict: "id" });
+
+    if (error) {
+      console.error("Profile save failed:", error.message);
+      profileMessage.textContent =
+        "Couldn't save your profile. Please try again.";
+      return;
+    }
+
+    profileMessage.textContent = "Profile saved successfully!";
+    profileSection.style.display = "none";
+  });
+
+  supabaseClient.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      console.error("Session check failed:", error.message);
+      return;
+    }
+
+    checkCustomerProfile(data.session);
+  });
+
+  supabaseClient.auth.onAuthStateChange(function (event, session) {
+    if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+      checkCustomerProfile(session);
+    }
+  });
+
+});
+</script>
+<!-- END PROFILE CONNECTION -->
 </body>
 </html>
